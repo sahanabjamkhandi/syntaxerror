@@ -1,0 +1,43 @@
+class AdaptiveStridePrefetcher(QueuedPrefetcher):
+    type = "AdaptiveStridePrefetcher"
+    cxx_class = "gem5::prefetch::AdaptiveStride"
+    cxx_header = "mem/cache/prefetch/adaptive_stride.hh"
+
+    on_inst = False
+
+    confidence_counter_bits = Param.Unsigned(
+        3, "Number of bits of the confidence counter"
+    )
+    initial_confidence = Param.Unsigned(
+        4, "Starting confidence of new entries"
+    )
+    confidence_threshold = Param.Percent(
+        50, "Prefetch generation confidence threshold"
+    )
+    
+    use_requestor_id = Param.Bool(True, "Use requestor id based history")
+    
+    # Adaptive parameters
+    min_degree = Param.Int(1, "Minimum number of prefetches to generate")
+    max_degree = Param.Int(8, "Maximum number of prefetches to generate")
+    adaptive_degree = Param.Bool(True, "Adaptively adjust the number of prefetches")
+
+    table_assoc = Param.Int(4, "Associativity of the PC table")
+    table_entries = Param.MemorySize("64", "Number of entries of the PC table")
+    table_indexing_policy = Param.BaseIndexingPolicy(
+        StridePrefetcherHashedSetAssociative(
+            entry_size=1, assoc=Parent.table_assoc, size=Parent.table_entries
+        ),
+        "Indexing policy of the PC table",
+    )
+    table_replacement_policy = Param.BaseReplacementPolicy(
+        RandomRP(), "Replacement policy of the PC table"
+    )
+    
+    # Placeholder for adaptive logic hooks. Actual implementation will depend on
+    # modifications to the C++ backend to use runtime performance metrics for adjusting
+    # prefetch behavior.
+    adaptivity_mode = Param.String(
+        "basic", "Mode of adaptivity (basic, aggressive, conservative)"
+    )
+
