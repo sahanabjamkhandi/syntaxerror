@@ -1,0 +1,22 @@
+# SConstruct file
+
+# Import necessary modules
+import os
+
+# Define variables
+PROG_NAME = 'adaptive'  # Change 'adaptive' to your program name if different
+SRC_DIR = 'src'         # Source directory containing your source files
+BUILD_DIR = 'build'     # Build directory where the compiled program will be placed
+
+# Set up environment
+env = Environment()
+
+# Define sources
+sources = [os.path.join(SRC_DIR, file) for file in os.listdir(SRC_DIR) if file.endswith('.c')]
+
+# Create build directory if it doesn't exist
+if not os.path.exists(BUILD_DIR):
+    os.makedirs(BUILD_DIR)
+
+# Compile and link the program
+env.Program(os.path.join(BUILD_DIR, PROG_NAME), sources)
